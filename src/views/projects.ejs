@@ -3,6 +3,12 @@
     <h1>
         <%= title %>
     </h1>
-    <p>Browse upcoming service projects. More details will be added soon.</p>
+    <ul>
+        <% projects.forEach(project=> { %>
+            <li>
+                <%= project.formatted_date %>: <%= project.title %> (<%= project.organization_name %>)
+            </li>
+            <% }); %>
+    </ul>
 
     <%- include('partials/footer') %>
