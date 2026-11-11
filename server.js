@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js';
 import { getAllProjects } from './src/models/projects.js';
+import { getAllCategories } from './src/models/categories.js';
 
 dotenv.config();
 
@@ -37,8 +38,10 @@ app.get('/projects', async (req, res) => {
     res.render('projects', { title, projects });
 });
 
-app.get('/categories', (req, res) => {
-    res.render('categories', { title: 'Service Project Categories' });
+app.get('/categories', async (req, res) => {
+    const categories = await getAllCategories();
+    const title = 'Service Project Categories';
+    res.render('categories', { title, categories });
 });
 
 app.listen(PORT, async () => {
