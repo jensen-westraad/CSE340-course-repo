@@ -19,4 +19,15 @@
             <a href="/categories">Categories</a>
         </nav>
     </header>
-    <main>
+
+    <% const messages=flash(); %>
+        <% Object.keys(messages).forEach(type=> { %>
+            <% if (messages[type].length> 0) { %>
+
+                <% messages[type].forEach(msg=> { %>
+                    <%= msg %>
+                        <% }); %>
+
+                            <% } %>
+                                <% }); %>
+                                    <main>
