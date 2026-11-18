@@ -1,4 +1,11 @@
-CREATE TABLE IF NOT EXISTS organization (
+-- Reset: drop in dependency order so re-running is always safe
+DROP TABLE IF EXISTS project_category CASCADE;
+DROP TABLE IF EXISTS project CASCADE;
+DROP TABLE IF EXISTS category CASCADE;
+DROP TABLE IF EXISTS organization CASCADE;
+
+-- Organizations
+CREATE TABLE organization (
     organization_id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     description TEXT NOT NULL,
@@ -11,7 +18,8 @@ INSERT INTO organization (name, description, contact_email, logo_filename) VALUE
 ('GreenHarvest Growers', 'An urban farming collective promoting food sustainability and education in local neighborhoods.', 'contact@greenharvest.org', 'greenharvest-logo.png'),
 ('UnityServe Volunteers', 'A volunteer coordination group supporting local charities and service initiatives.', 'hello@unityserve.org', 'unityserve-logo.png');
 
-CREATE TABLE IF NOT EXISTS project (
+-- Projects
+CREATE TABLE project (
     project_id SERIAL PRIMARY KEY,
     organization_id INTEGER NOT NULL,
     title VARCHAR(150) NOT NULL,
@@ -19,20 +27,6 @@ CREATE TABLE IF NOT EXISTS project (
     location VARCHAR(150) NOT NULL,
     project_date DATE NOT NULL,
     FOREIGN KEY (organization_id) REFERENCES organization(organization_id) ON DELETE CASCADE
-);
-
-
-CREATE TABLE IF NOT EXISTS category (
-    category_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS project_category (
-    project_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL,
-    PRIMARY KEY (project_id, category_id),
-    FOREIGN KEY (project_id) REFERENCES project(project_id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
 );
 
 INSERT INTO project (organization_id, title, description, location, project_date) VALUES
@@ -52,12 +46,26 @@ INSERT INTO project (organization_id, title, description, location, project_date
 (3, 'Blood Drive', 'Assist donors and staff during check-in.', 'City Hospital', '2027-02-01'),
 (3, 'Home Repair Saturday', 'Make small repairs for elderly homeowners.', 'Various Locations', '2027-02-13');
 
+-- Categories
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
 INSERT INTO category (name) VALUES
 ('Environmental'),
 ('Education'),
 ('Community Support'),
-('Health')
-ON CONFLICT (name) DO NOTHING;
+('Health');
+
+-- Project <-> Category link table
+CREATE TABLE project_category (
+    project_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    PRIMARY KEY (project_id, category_id),
+    FOREIGN KEY (project_id) REFERENCES project(project_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
+);
 
 INSERT INTO project_category (project_id, category_id)
 SELECT p.project_id, c.category_id
@@ -82,5 +90,5 @@ FROM (VALUES
     ('Home Repair Saturday', 'Community Support')
 ) AS v(project_title, category_name)
 JOIN project p ON p.title = v.project_title
-JOIN category c ON c.name = v.category_name
-ON CONFLICT DO NOTHING;
+JOIN category c ON c.name = v.category_name;
+
