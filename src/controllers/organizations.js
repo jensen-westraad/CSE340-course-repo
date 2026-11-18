@@ -10,10 +10,16 @@ const showOrganizationsPage = async (req, res) => {
     res.render('organizations', { title, organizations });
 };
 
-
-const showOrganizationDetailsPage = async (req, res) => {
+const showOrganizationDetailsPage = async (req, res, next) => {
     const organizationId = req.params.id;
     const organizationDetails = await getOrganizationDetails(organizationId);
+
+    if (!organizationDetails) {
+        const err = new Error('Organization not found');
+        err.status = 404;
+        return next(err);
+    }
+
     const projects = await getProjectsByOrganizationId(organizationId);
     const title = 'Organization Details';
 
