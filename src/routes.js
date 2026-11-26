@@ -3,7 +3,7 @@ import express from 'express';
 import { showHomePage } from './controllers/index.js';
 import { showOrganizationsPage, showOrganizationDetailsPage, showNewOrganizationForm, processNewOrganizationForm, organizationValidation, showEditOrganizationForm, processEditOrganizationForm } from './controllers/organizations.js';
 import { showProjectsPage, showProjectDetailsPage, showNewProjectForm, processNewProjectForm, projectValidation, showEditProjectForm, processEditProjectForm } from './controllers/projects.js';
-import { showCategoriesPage, showCategoryDetailsPage, showAssignCategoriesForm, processAssignCategoriesForm } from './controllers/categories.js';
+import { showCategoriesPage, showCategoryDetailsPage, showNewCategoryForm, processNewCategoryForm, showEditCategoryForm, processEditCategoryForm, categoryValidation, showAssignCategoriesForm, processAssignCategoriesForm } from './controllers/categories.js';
 import { testErrorPage } from './controllers/errors.js';
 
 const router = express.Router();
@@ -24,6 +24,18 @@ router.get('/project/:id', showProjectDetailsPage);
 
 // Route for category details page
 router.get('/category/:id', showCategoryDetailsPage);
+
+// Route for new category page
+router.get('/new-category', showNewCategoryForm);
+
+// Route to handle new category form submission
+router.post('/new-category', categoryValidation, processNewCategoryForm);
+
+// Route to display the edit category form
+router.get('/edit-category/:id', showEditCategoryForm);
+
+// Route to handle the edit category form submission
+router.post('/edit-category/:id', categoryValidation, processEditCategoryForm);
 
 // Route for new organization page
 router.get('/new-organization', showNewOrganizationForm);
