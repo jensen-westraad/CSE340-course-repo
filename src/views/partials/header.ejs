@@ -22,12 +22,10 @@
 
     <% const messages=flash(); %>
         <% Object.keys(messages).forEach(type=> { %>
-            <% if (messages[type].length> 0) { %>
-
-                <% messages[type].forEach(msg=> { %>
+            <% messages[type].forEach(msg=> { %>
+                <div class="flash flash-<%= type %>" role="<%= type === 'error' ? 'alert' : 'status' %>">
                     <%= msg %>
-                        <% }); %>
-
-                            <% } %>
-                                <% }); %>
-                                    <main>
+                </div>
+                <% }); %>
+                    <% }); %>
+                        <main>
